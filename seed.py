@@ -6,12 +6,10 @@ from models import Auction, Bid
 def seed_data():
     db = SessionLocal()
     try:
-        # Проверяем, есть ли уже данные
         if db.query(Auction).first():
             print("[BidService] Data already exists, skipping seed.")
             return
 
-        # Создаём аукционы
         auctions = [
             Auction(
                 start=datetime.utcnow(),
@@ -30,9 +28,8 @@ def seed_data():
             ),
         ]
         db.add_all(auctions)
-        db.flush()  # чтобы получить id
+        db.flush()  
 
-        # Создаём ставки
         bids = [
             Bid(artwork_id=1, user_id=1, amount=500.00, status="active", auction_id=auctions[0].auction_id),
             Bid(artwork_id=1, user_id=2, amount=750.00, status="active", auction_id=auctions[0].auction_id),
