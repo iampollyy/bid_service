@@ -1,6 +1,7 @@
-fastapi 
-uvicorn 
-sqlalchemy 
-pyodbc 
+fastapi
+uvicorn
+sqlalchemy
+pyodbc
 pydantic
 python-dotenv
+azure-servicebus==7.12.1

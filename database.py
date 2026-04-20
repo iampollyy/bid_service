@@ -24,7 +24,7 @@ params = urllib.parse.quote_plus(
 
 DATABASE_URL = f"mssql+pyodbc:///?odbc_connect={params}"
 
-SCHEMA = "BidSchema"
+SCHEMA = "BidSchema_Polina"
 
 engine = create_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
