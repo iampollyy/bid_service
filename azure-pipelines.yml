@@ -1,19 +1,73 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+  # ================================================================
+  # Stage 1 – Syntax check (py_compile) of every .py file
+  # ================================================================
+  - stage: SyntaxCheck
+    displayName: "Syntax Check"
+    jobs:
+      - job: SyntaxCheckJob
+        displayName: "py_compile all .py files"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.11"
+            displayName: "Use Python 3.11"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+          - script: |
+              echo "=== Running syntax check on all .py files ==="
+              find . -name "*.py" -not -path "./.venv/*" -not -path "./__pycache__/*" | while read f; do
+                echo "Checking $f"
+                python -m py_compile "$f" || exit 1
+              done
+              echo "=== All files passed syntax check ==="
+            displayName: "Compile-check Python files"
+
+  # ================================================================
+  # Stage 2 – Run unit tests & publish results as artifacts
+  # ================================================================
+  - stage: Test
+    displayName: "Run Tests"
+    dependsOn: SyntaxCheck
+    jobs:
+      - job: UnitTests
+        displayName: "pytest + publish results"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.11"
+            displayName: "Use Python 3.11"
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements
+              pip install pytest pytest-junitxml httpx
+            displayName: "Install dependencies"
+
+          - script: |
+              python -m pytest tests/ \
+                --junitxml=test-results/results.xml \
+                -v
+            displayName: "Run unit tests"
+
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: "JUnit"
+              testResultsFiles: "test-results/results.xml"
+              mergeTestResults: true
+              testRunTitle: "BidService Unit Tests"
+            displayName: "Publish test results"
+
+          - task: PublishBuildArtifacts@1
+            condition: succeededOrFailed()
+            inputs:
+              PathtoPublish: "test-results"
+              ArtifactName: "TestResults"
+              publishLocation: "Container"
+            displayName: "Upload test results artifact"

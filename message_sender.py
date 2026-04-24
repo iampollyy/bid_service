@@ -13,6 +13,7 @@ class MessageSender:
     def __init__(self):
         self.connection_string = SERVICE_BUS_SEND_CONNECTION_STRING
         self.queue_name = QUEUE_NAME
+        logger.info("MessageSender initialised for queue '%s'", self.queue_name)
 
     def send_message(self, event_type: str, data: dict) -> bool:
         message_body = {

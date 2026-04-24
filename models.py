@@ -3,6 +3,8 @@ from sqlalchemy import (
 )
 from database import Base, SCHEMA
 
+_FK_PREFIX = f"{SCHEMA}." if SCHEMA else ""
+
 
 class Auction(Base):
     __tablename__ = "Auction"
@@ -27,6 +29,6 @@ class Bid(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     auction_id = Column(
         Integer,
-        ForeignKey(f"{SCHEMA}.Auction.auction_id"),
+        ForeignKey(f"{_FK_PREFIX}Auction.auction_id"),
         nullable=False
     )

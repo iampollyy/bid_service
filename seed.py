@@ -1,13 +1,16 @@
+import logging
 from datetime import datetime, timedelta
 from database import SessionLocal
 from models import Auction, Bid
+
+logger = logging.getLogger(__name__)
 
 
 def seed_data():
     db = SessionLocal()
     try:
         if db.query(Auction).first():
-            print("[BidService] Data already exists, skipping seed.")
+            logger.info("Seed data already exists — skipping")
             return
 
         auctions = [
@@ -39,9 +42,9 @@ def seed_data():
         ]
         db.add_all(bids)
         db.commit()
-        print("[BidService] Seed data added successfully!")
+        logger.info("Seed data added successfully (%d auctions, %d bids)", len(auctions), len(bids))
     except Exception as e:
         db.rollback()
-        print(f"[BidService] Error during seed: {e}")
+        logger.error("Error during seed: %s", e, exc_info=True)
     finally:
         db.close()
