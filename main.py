@@ -3,14 +3,14 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-from database import engine, get_db, create_schema, Base
-from models import Bid, Auction
-from schemas import (
+from bid_service.database import engine, get_db, create_schema, Base
+from bid_service.models import Bid, Auction
+from bid_service.schemas import (
     BidResponse, BidCreate,
     AuctionResponse, AuctionCreate, AuctionStatusUpdate
 )
-from seed import seed_data
-from message_sender import message_sender
+from bid_service.seed import seed_data
+from bid_service.message_sender import message_sender
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

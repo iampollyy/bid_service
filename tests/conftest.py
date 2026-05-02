@@ -62,6 +62,7 @@ sys.modules["seed"] = _seed_mod
 
 from models import Auction, Bid  
 from database import Base        
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture(autouse=True)
@@ -87,3 +88,20 @@ def mock_message_sender():
     """Return the mocked message_sender so tests can assert on calls."""
     _mock_sender.reset_mock()
     return _mock_sender
+
+
+@pytest.fixture()
+def client(db_session):
+    """FastAPI TestClient with mocked dependencies for bid service tests."""
+    from main import app
+    
+    def _override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass
+    
+    app.dependency_overrides[_db_mod.get_db] = _override_get_db
+    with TestClient(app, raise_server_exceptions=False) as c:
+        yield c
+    app.dependency_overrides.clear()

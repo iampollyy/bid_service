@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timezone
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-from config import SERVICE_BUS_SEND_CONNECTION_STRING, QUEUE_NAME
+from bid_service.config import SERVICE_BUS_SEND_CONNECTION_STRING, QUEUE_NAME
 
 logger = logging.getLogger(__name__)
 

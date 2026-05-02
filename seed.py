@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta
-from database import SessionLocal
-from models import Auction, Bid
+from bid_service.database import SessionLocal
+from bid_service.models import Auction, Bid
 
 logger = logging.getLogger(__name__)
 
