@@ -3,7 +3,11 @@ Shared test fixtures for bid_service unit tests.
 Uses an in-memory SQLite database so no real DB or Service Bus is needed.
 """
 import sys
-import os
+from pathlib import Path
+
+# Add parent directory to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import types
 import pytest
 from unittest.mock import MagicMock, patch
